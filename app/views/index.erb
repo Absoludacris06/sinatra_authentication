@@ -3,4 +3,20 @@
   <%# TODO: 
   1. If user is not signed in - display "Welcome".
   2. If user is signed in then  display all users %>
+
+  <h1>Welcome to the Club!</h1>
+  <% unless @current_user.nil? %>
+  	<table class="user_list">
+  		<tr>
+  			<th>Name</th>
+  			<th>Email</th>
+  		</tr>
+  		<% @users.each do |user| %>
+  		<tr>
+  			<td><%= user.name %></td>
+  			<td><%= user.email %></td>
+  		</tr>
+  		<% end %>
+  	</table>
+  <% end %>
 </div>

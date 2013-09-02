@@ -1,31 +1,46 @@
+enable :sessions
+
 get '/' do
-  # render home page
- #TODO: Show all users if user is signed in
+	if logged_in?
+		@current_user = User.find(session[:user_id])
+	else
+		@current_user = nil
+	end
+  @users = User.order("created_at DESC")
   erb :index
 end
 
 #----------- SESSIONS -----------
 
 get '/sessions/new' do
-  # render sign-in page 
   erb :sign_in
 end
 
 post '/sessions' do
-  # sign-in
+  if user = User.authenticate(params[:email], params[:password])
+  	session[:user_id] = user.id
+  end
+  redirect to('/')
 end
 
 delete '/sessions/:id' do
-  # sign-out -- invoked via AJAX
+	session[:user_id] = nil
+	redirect to ('/')
 end
 
 #----------- USERS -----------
 
 get '/users/new' do
-  # render sign-up page
   erb :sign_up
 end
 
 post '/users' do
-  # sign-up a new user
+	@new_user = User.create(params[:user])
+	if @new_user.valid?
+		session[:user_id] = @new_user.id
+		redirect to('/')
+	else
+  	@errors = @new_user.errors.full_messages
+  	erb :sign_up
+	end
 end
